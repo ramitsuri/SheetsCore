@@ -3,12 +3,6 @@ package com.ramitsuri.sheetscore;
 import android.accounts.Account;
 import android.content.Context;
 
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetResponse;
@@ -16,7 +10,8 @@ import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import com.ramitsuri.sheetscore.intdef.Dimension;
 import com.ramitsuri.sheetscore.intdef.ValueRenderOption;
-import com.ramitsuri.sheetscore.spreadsheetResponse.BaseSpreadsheetResponse;
+import com.ramitsuri.sheetscore.spreadsheetResponse.BaseResponse;
+import com.ramitsuri.sheetscore.spreadsheetResponse.CreateSpreadsheetResponse;
 import com.ramitsuri.sheetscore.spreadsheetResponse.SpreadsheetSpreadsheetResponse;
 import com.ramitsuri.sheetscore.spreadsheetResponse.UpdateSpreadsheetResponse;
 import com.ramitsuri.sheetscore.spreadsheetResponse.ValueRangeSpreadsheetResponse;
@@ -28,40 +23,15 @@ import javax.annotation.Nonnull;
 
 import androidx.annotation.NonNull;
 
-public class SheetsProcessor {
-
-    @NonNull
-    private Context mContext;
-    @NonNull
-    private String mAppName;
-    @NonNull
-    private String mSpreadsheetId;
-    @NonNull
-    private Account mAccount;
-    @NonNull
-    private List<String> mScopes;
+public class SheetsProcessor extends BaseProcessor {
 
     public SheetsProcessor(@NonNull Context context, @NonNull String appName,
-            @NonNull Account account, @NonNull String spreadsheetId, @NonNull List<String> scopes) {
-        mContext = context;
-        mAppName = appName;
-        mAccount = account;
-        mSpreadsheetId = spreadsheetId;
-        mScopes = scopes;
+            @NonNull Account account, @NonNull List<String> scopes) {
+        super(context, appName, account, scopes);
     }
 
-    private Sheets buildSheetsService(
-            @NonNull Context context,
-            @NonNull String appName,
-            @Nonnull Account account,
-            @NonNull List<String> scopes) {
-        GoogleAccountCredential credential = GoogleAccountCredential
-                .usingOAuth2(context, scopes)
-                .setBackOff(new ExponentialBackOff());
-        credential.setSelectedAccount(account);
-        HttpTransport transport = AndroidHttp.newCompatibleTransport();
-        JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-        return new Sheets.Builder(transport, jsonFactory, credential)
+    private Sheets buildService(@NonNull String appName) {
+        return new Sheets.Builder(getHttpTransport(), getJacksonFactory(), getCredential())
                 .setApplicationName(appName)
                 .build();
     }
@@ -69,13 +39,13 @@ public class SheetsProcessor {
     /**
      * Performs a "spreadsheet get" request on a given Spreadsheet
      */
-    public BaseSpreadsheetResponse getSheetsInSpreadsheet()
+    public BaseResponse getSheetsInSpreadsheet(@Nonnull String spreadsheetId)
             throws IOException {
         // Build Service
-        Sheets service = buildSheetsService(mContext, mAppName, mAccount, mScopes);
+        Sheets service = buildService(mAppName);
 
         // Request
-        Sheets.Spreadsheets.Get request = service.spreadsheets().get(mSpreadsheetId);
+        Sheets.Spreadsheets.Get request = service.spreadsheets().get(spreadsheetId);
         request.setIncludeGridData(false);
 
         // Response
@@ -88,14 +58,16 @@ public class SheetsProcessor {
     /**
      * Performs a "values get" request on a given Spreadsheet range
      */
-    public BaseSpreadsheetResponse getSheetData(@NonNull String range, @Dimension String dimension)
+    public BaseResponse getSheetData(@Nonnull String spreadsheetId,
+            @NonNull String range,
+            @Dimension String dimension)
             throws IOException {
         // Build Service
-        Sheets service = buildSheetsService(mContext, mAppName, mAccount, mScopes);
+        Sheets service = buildService(mAppName);
 
         // Request
         Sheets.Spreadsheets.Values.Get request =
-                service.spreadsheets().values().get(mSpreadsheetId, range);
+                service.spreadsheets().values().get(spreadsheetId, range);
         request.setValueRenderOption(ValueRenderOption.UNFORMATTED_VALUE);
         request.setMajorDimension(dimension);
 
@@ -109,19 +81,39 @@ public class SheetsProcessor {
     /**
      * Performs a "batchUpdate" request on a given Spreadsheet
      */
-    public BaseSpreadsheetResponse updateSheet(@NonNull BatchUpdateSpreadsheetRequest requestBody)
+    public BaseResponse updateSheet(@Nonnull String spreadsheetId,
+            @NonNull BatchUpdateSpreadsheetRequest requestBody)
             throws IOException {
         // Build Service
-        Sheets service = buildSheetsService(mContext, mAppName, mAccount, mScopes);
+        Sheets service = buildService(mAppName);
 
         // Request
         Sheets.Spreadsheets.BatchUpdate request =
-                service.spreadsheets().batchUpdate(mSpreadsheetId, requestBody);
+                service.spreadsheets().batchUpdate(spreadsheetId, requestBody);
 
         // Response
         BatchUpdateSpreadsheetResponse response = request.execute();
         UpdateSpreadsheetResponse spreadsheetResponse = new UpdateSpreadsheetResponse();
         spreadsheetResponse.setBatchUpdateSpreadsheetResponse(response);
+        return spreadsheetResponse;
+    }
+
+    /**
+     * Performs a "create" request on a given Spreadsheet
+     */
+    public BaseResponse createSheet(@NonNull Spreadsheet requestBody)
+            throws IOException {
+        // Build Service
+        Sheets service = buildService(mAppName);
+
+        // Request
+        Sheets.Spreadsheets.Create request =
+                service.spreadsheets().create(requestBody);
+
+        // Response
+        Spreadsheet response = request.execute();
+        CreateSpreadsheetResponse spreadsheetResponse = new CreateSpreadsheetResponse();
+        spreadsheetResponse.setResponse(response);
         return spreadsheetResponse;
     }
 }

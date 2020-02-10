@@ -11,7 +11,7 @@ publishing {
         bar(MavenPublication) {
             groupId 'com.ramitsuri'
             artifactId 'sheetscore'
-            version '1.4.0'
+            version '3.0.0'
             artifact(sourceJar)
             artifact("$buildDir/outputs/aar/sheetscore-release.aar")
         }
@@ -50,18 +50,21 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    // Google Sheets
+    // Google Sheets and Drive
     implementation("com.google.api-client:google-api-client-android:1.22.0") {
         exclude group: "org.apache.httpcomponents"
     }
     implementation("com.google.apis:google-api-services-sheets:v4-rev40-1.22.0") {
         exclude group: "org.apache.httpcomponents"
     }
+    implementation("com.google.apis:google-api-services-drive:v3-rev110-1.23.0") {
+        exclude group: "org.apache.httpcomponents"
+    }
 
     // Google Auth
     implementation "com.google.android.gms:play-services-auth:17.0.0"
 
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
