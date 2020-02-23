@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.content.Context;
 
 import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.model.BatchGetValuesResponse;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetResponse;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
@@ -15,6 +16,7 @@ import com.ramitsuri.sheetscore.spreadsheetResponse.CreateSpreadsheetResponse;
 import com.ramitsuri.sheetscore.spreadsheetResponse.SpreadsheetSpreadsheetResponse;
 import com.ramitsuri.sheetscore.spreadsheetResponse.UpdateSpreadsheetResponse;
 import com.ramitsuri.sheetscore.spreadsheetResponse.ValueRangeSpreadsheetResponse;
+import com.ramitsuri.sheetscore.spreadsheetResponse.ValueRangesSpreadsheetResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -75,6 +77,30 @@ public class SheetsProcessor extends BaseProcessor {
         ValueRange response = request.execute();
         ValueRangeSpreadsheetResponse spreadsheetResponse = new ValueRangeSpreadsheetResponse();
         spreadsheetResponse.setValueRange(response);
+        return spreadsheetResponse;
+    }
+
+    /**
+     * Performs a "values get" request on a given Spreadsheet range
+     */
+    public BaseResponse getSheetData(@Nonnull String spreadsheetId,
+            @NonNull List<String> ranges,
+            @Dimension String dimension)
+            throws IOException {
+        // Build Service
+        Sheets service = buildService(mAppName);
+
+        // Request
+        Sheets.Spreadsheets.Values.BatchGet request =
+                service.spreadsheets().values().batchGet(spreadsheetId);
+        request.setRanges(ranges);
+        request.setValueRenderOption(ValueRenderOption.UNFORMATTED_VALUE);
+        request.setMajorDimension(dimension);
+
+        // Response
+        BatchGetValuesResponse response = request.execute();
+        ValueRangesSpreadsheetResponse spreadsheetResponse = new ValueRangesSpreadsheetResponse();
+        spreadsheetResponse.setValueRanges(response.getValueRanges());
         return spreadsheetResponse;
     }
 

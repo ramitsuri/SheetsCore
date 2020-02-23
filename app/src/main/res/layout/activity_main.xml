@@ -98,7 +98,7 @@
         android:id="@+id/edit_range"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Enter range"
+        android:hint="Enter values"
         android:inputType="text"
         app:layout_constraintEnd_toStartOf="@id/btn_get_range"
         app:layout_constraintStart_toStartOf="parent"
@@ -115,13 +115,22 @@
         app:layout_constraintWidth_percent="0.2" />
 
     <Button
+        android:id="@+id/btn_get_ranges"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Get Ranges"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edit_range" />
+
+    <Button
         android:id="@+id/btn_get_sheets"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Get Sheets"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edit_range" />
+        app:layout_constraintTop_toBottomOf="@id/btn_get_ranges" />
 
     <Button
         android:id="@+id/btn_create"

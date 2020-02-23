@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String SETTINGS_KEY_ACCOUNT_NAME = "settings_key_account_name";
     private static final String SETTINGS_KEY_ACCOUNT_TYPE = "settings_key_account_type";
 
-    Button mBtnSignIn, mBtnCopy, mBtnInsert, mBtnGetRange, mBtnGetSheets, mBtnCreate,
+    Button mBtnSignIn, mBtnCopy, mBtnInsert, mBtnGetRange, mBtnGetRanges, mBtnGetSheets, mBtnCreate,
             mBtnDuplicateSheets;
     EditText mEditPrimaryId, mEditCopyId, mEditRange, mEditRowValues, mEditSheetId,
             mEditSourceSheetId;
@@ -64,6 +64,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mBtnGetRange = findViewById(R.id.btn_get_range);
         mBtnGetRange.setOnClickListener(this);
+
+        mBtnGetRanges = findViewById(R.id.btn_get_ranges);
+        mBtnGetRanges.setOnClickListener(this);
 
         mBtnGetSheets = findViewById(R.id.btn_get_sheets);
         mBtnGetSheets.setOnClickListener(this);
@@ -122,6 +125,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             SheetOperationHelper.getRange(account, mEditPrimaryId.getText().toString().trim(),
                     mEditRange.getText().toString().trim());
+        } else if (v == mBtnGetRanges) { // GET RANGE
+            if (TextUtils.isEmpty(mEditPrimaryId.getText().toString().trim())) {
+                Log.w(TAG, "Cannot get ranges. Spreadsheet  id empty");
+                return;
+            }
+            List<String> ranges = new ArrayList<>();
+            ranges.add("Jan!A:G");
+            ranges.add("Feb!A:G");
+            ranges.add("Mar!A:G");
+            SheetOperationHelper.getRanges(account, mEditPrimaryId.getText().toString().trim(),
+                    ranges);
         } else if (v == mBtnGetSheets) { // GET SHEETS
             if (TextUtils.isEmpty(mEditPrimaryId.getText().toString().trim())) {
                 Log.w(TAG, "Cannot get sheets. Spreadsheet  id  empty");

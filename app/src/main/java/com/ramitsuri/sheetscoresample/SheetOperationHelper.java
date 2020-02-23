@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
+import com.google.api.services.sheets.v4.model.ValueRange;
 import com.ramitsuri.sheetscore.DriveProcessor;
 import com.ramitsuri.sheetscore.SheetsProcessor;
 import com.ramitsuri.sheetscore.driveResponse.FileCopyResponse;
@@ -15,6 +16,7 @@ import com.ramitsuri.sheetscore.spreadsheetResponse.BaseResponse;
 import com.ramitsuri.sheetscore.spreadsheetResponse.CreateSpreadsheetResponse;
 import com.ramitsuri.sheetscore.spreadsheetResponse.SpreadsheetSpreadsheetResponse;
 import com.ramitsuri.sheetscore.spreadsheetResponse.ValueRangeSpreadsheetResponse;
+import com.ramitsuri.sheetscore.spreadsheetResponse.ValueRangesSpreadsheetResponse;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -113,6 +115,36 @@ public class SheetOperationHelper {
                         Log.d(TAG, objectLists.toString());
                     } else {
                         Log.d(TAG, "Range response - object list null");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public static void getRanges(@Nonnull final Account account, final String spreadsheetId,
+            final List<String> ranges) {
+        AppExecutors executors = AppExecutors.getInstance();
+        executors.networkIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                SheetsProcessor processor =
+                        new SheetsProcessor(MainApplication.getInstance(),
+                                MainApplication.getInstance().getApplicationInfo().name,
+                                account,
+                                Arrays.asList(SCOPES));
+                try {
+                    BaseResponse response =
+                            processor.getSheetData(spreadsheetId, ranges, Dimension.ROWS);
+                    for (ValueRange range : ((ValueRangesSpreadsheetResponse)response)
+                            .getValueRanges()) {
+                        Log.d(TAG, "------------------------------");
+                        if (range.getRange() != null && range.getValues() != null) {
+                            Log.d(TAG, range.getRange());
+                            Log.d(TAG, range.getValues().toString());
+                        }
+                        Log.d(TAG, "------------------------------");
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
