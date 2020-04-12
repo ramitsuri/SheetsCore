@@ -199,7 +199,7 @@ public class SheetOperationHelper {
                     Spreadsheet requestBody = SpreadsheetRequestHelper
                             .getCreateRequest(spreadsheetTitle, entitiesSheetTitle,
                                     entitiesSheetIndex, templateSheetTitle, templateSheetIndex,
-                                    paymentMethods, categories);
+                                    paymentMethods, categories, months);
                     BaseResponse response = processor.createSheet(requestBody);
                     Log.d(TAG,
                             ((CreateSpreadsheetResponse)response).getResponse().getSpreadsheetId());

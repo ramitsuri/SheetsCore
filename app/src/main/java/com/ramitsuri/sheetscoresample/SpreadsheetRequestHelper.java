@@ -75,7 +75,8 @@ public class SpreadsheetRequestHelper {
             @Nonnull String templateSheetTitle,
             int templateSheetIndex,
             @Nonnull List<String> paymentMethods,
-            @Nonnull List<String> categories) {
+            @Nonnull List<String> categories,
+            @Nonnull List<String> months) {
         Spreadsheet request = new Spreadsheet();
 
         SpreadsheetProperties properties = new SpreadsheetProperties();
@@ -107,8 +108,13 @@ public class SpreadsheetRequestHelper {
 
         List<Sheet> sheets = new ArrayList<>();
         sheets.add(getEntitiesSheet(entitiesSheetTitle, entitiesSheetIndex,
-                paymentMethods, categories));
+                paymentMethods, categories, months));
         sheets.add(getExpenseSheet(templateSheetTitle, templateSheetIndex));
+        int index = templateSheetIndex + 1;
+        for (String month : months) {
+            sheets.add(getExpenseSheet(month, index));
+            index = index + 1;
+        }
 
         request.setSheets(sheets);
         return request;
@@ -212,15 +218,15 @@ public class SpreadsheetRequestHelper {
         data.setRowData(rowDataList);
         dataList.add(data);
 
-        sheet.setData(dataList);
+        //sheet.setData(dataList);
 
         return sheet;
     }
 
     private static Sheet getEntitiesSheet(@Nonnull String title,
-            int index,
-            @Nonnull List<String> paymentMethods,
-            @Nonnull List<String> categories) {
+            int index, @Nonnull List<String> paymentMethods,
+            @Nonnull List<String> categories,
+            List<String> months) {
         int rows = 22;
         int columns = 13;
         Sheet sheet = new Sheet();
@@ -229,7 +235,9 @@ public class SpreadsheetRequestHelper {
         List<GridData> dataList = new ArrayList<>();
         GridData data = new GridData();
         List<RowData> rowDataList = new ArrayList<>();
-        for (int rowIndex = 0; rowIndex < 22; rowIndex++) {
+        int rowIndex = 0;
+        while (rowIndex < categories.size() || rowIndex < paymentMethods.size() ||
+                rowIndex < months.size()) {
             RowData rowData = new RowData();
             List<CellData> valuesList = new ArrayList<>();
             CellData value;
@@ -258,8 +266,22 @@ public class SpreadsheetRequestHelper {
             value = getEmptyCell();
             valuesList.add(value);
 
+            // Months
+            if (rowIndex < months.size()) {
+                value = getValueCell(months.get(rowIndex));
+            } else {
+                value = getEmptyCell();
+            }
+            valuesList.add(value);
+
+            // Empty cell
+            value = getEmptyCell();
+            valuesList.add(value);
+
             rowData.setValues(valuesList);
             rowDataList.add(rowData);
+
+            rowIndex++;
         }
         data.setRowData(rowDataList);
         dataList.add(data);
@@ -275,9 +297,7 @@ public class SpreadsheetRequestHelper {
                 .setIndex(index)
                 .setSheetType("GRID")
                 .setGridProperties(
-                        new GridProperties()
-                                .setRowCount(rows)
-                                .setColumnCount(columns));
+                        new GridProperties());
     }
 
     private static CellData getEmptyCell() {

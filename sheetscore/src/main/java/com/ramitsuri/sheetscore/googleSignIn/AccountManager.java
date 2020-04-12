@@ -28,8 +28,7 @@ public class AccountManager {
         if (signInAccount != null && signInAccount.getGrantedScopes().containsAll(requiredScopes)) {
             response.setGoogleSignInAccount(signInAccount);
         } else {
-            GoogleSignInOptions.Builder builder =
-                    new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN);
+            GoogleSignInOptions.Builder builder = new GoogleSignInOptions.Builder();
             for (Scope scope : requiredScopes) {
                 builder.requestScopes(scope);
             }
