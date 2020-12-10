@@ -2,6 +2,7 @@ package com.ramitsuri.sheetscoresample;
 
 import android.text.TextUtils;
 
+import com.google.api.services.sheets.v4.model.AddSheetRequest;
 import com.google.api.services.sheets.v4.model.AppendCellsRequest;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
 import com.google.api.services.sheets.v4.model.BooleanCondition;
@@ -139,6 +140,36 @@ public class SpreadsheetRequestHelper {
             requestList.add(request);
             startIndex++;
         }
+        requestBody.setRequests(requestList);
+        return requestBody;
+    }
+
+    public static BatchUpdateSpreadsheetRequest getAddSheetRequest(
+            String sheetName,
+            int sheetIndex) {
+        BatchUpdateSpreadsheetRequest requestBody = new BatchUpdateSpreadsheetRequest();
+        List<Request> requestList = new ArrayList<>();
+
+        Request request = new Request();
+
+        int rows = 300;
+        int columns = 20;
+
+        SheetProperties properties = new SheetProperties()
+                .setTitle(sheetName)
+                .setIndex(sheetIndex)
+                .setSheetType("GRID")
+                .setGridProperties(
+                        new GridProperties()
+                                .setRowCount(rows)
+                                .setColumnCount(columns));
+
+        AddSheetRequest addSheetRequest = new AddSheetRequest()
+                .setProperties(properties);
+
+        request.setAddSheet(addSheetRequest);
+        requestList.add(request);
+
         requestBody.setRequests(requestList);
         return requestBody;
     }

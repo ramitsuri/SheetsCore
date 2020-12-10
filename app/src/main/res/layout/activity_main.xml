@@ -161,4 +161,24 @@
         app:layout_constraintTop_toTopOf="@id/edit_source_sheet_id"
         app:layout_constraintWidth_percent="0.2" />
 
+    <EditText
+        android:id="@+id/edit_sheet_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Enter Sheet Name"
+        android:inputType="text"
+        app:layout_constraintEnd_toStartOf="@id/btn_duplicate_sheets"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edit_source_sheet_id" />
+
+    <Button
+        android:id="@+id/btn_add_sheet"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Add Sheet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/edit_range"
+        app:layout_constraintTop_toTopOf="@id/edit_sheet_name"
+        app:layout_constraintWidth_percent="0.2" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

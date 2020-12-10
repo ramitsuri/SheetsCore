@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "737351610977",
+    "firebase_url": "https://sheetstestharness.firebaseio.com",
+    "project_id": "sheetstestharness",
+    "storage_bucket": "sheetstestharness.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:737351610977:android:dc022fe45a753e990b7020",
+        "android_client_info": {
+          "package_name": "com.ramitsuri.sheetscoresample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "737351610977-dl0faldkm9327j5qk2b5a80dvfk3l7t1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ramitsuri.sheetscoresample",
+            "certificate_hash": "fe81b4f0d58f26ea685051d1f855beec6b5542da"
+          }
+        },
+        {
+          "client_id": "737351610977-bm0fn3l0inatnoub4prjndvorii0arm0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMUQBDCU0rDgqfA0l13UOC5YaCzK5W4kM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "737351610977-bm0fn3l0inatnoub4prjndvorii0arm0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

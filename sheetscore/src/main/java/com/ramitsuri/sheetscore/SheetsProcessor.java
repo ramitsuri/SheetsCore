@@ -81,7 +81,7 @@ public class SheetsProcessor extends BaseProcessor {
     }
 
     /**
-     * Performs a "values get" request on a given Spreadsheet range
+     * Performs a "values get" request on given multiple Spreadsheet ranges
      */
     public BaseResponse getSheetData(@Nonnull String spreadsheetId,
             @NonNull List<String> ranges,

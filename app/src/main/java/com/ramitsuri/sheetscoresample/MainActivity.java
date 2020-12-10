@@ -26,6 +26,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import static com.ramitsuri.sheetscoresample.Constants.SCOPES;
 
+/**
+ * Steps to set up the account with a Spreadsheet
+ *
+ * 1. Press SignIn
+ * 2. If fails with Status{statusCode=DEVELOPER_ERROR, resolution=null}, the SHA key needs to be
+ * set in Google API console
+ * 3. Make sure full SHEET access is provided for easier access
+ * 4. When signed in, enter Spreadsheet id and run a get operation to make sure it works
+ */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = MainActivity.class.getName();
@@ -37,9 +46,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String SETTINGS_KEY_ACCOUNT_TYPE = "settings_key_account_type";
 
     Button mBtnSignIn, mBtnCopy, mBtnInsert, mBtnGetRange, mBtnGetRanges, mBtnGetSheets, mBtnCreate,
-            mBtnDuplicateSheets;
+            mBtnDuplicateSheets, mBtnAddSheet;
     EditText mEditPrimaryId, mEditCopyId, mEditRange, mEditRowValues, mEditSheetId,
-            mEditSourceSheetId;
+            mEditSourceSheetId, mEditSheetName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mEditRowValues = findViewById(R.id.edit_insert_text);
         mEditSheetId = findViewById(R.id.edit_sheet_id);
         mEditSourceSheetId = findViewById(R.id.edit_source_sheet_id);
+        mEditSheetName = findViewById(R.id.edit_sheet_name);
 
         mBtnSignIn = findViewById(R.id.btn_sign_in);
         mBtnSignIn.setOnClickListener(this);
@@ -76,6 +86,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mBtnDuplicateSheets = findViewById(R.id.btn_duplicate_sheets);
         mBtnDuplicateSheets.setOnClickListener(this);
+
+        mBtnAddSheet = findViewById(R.id.btn_add_sheet);
+        mBtnAddSheet.setOnClickListener(this);
     }
 
     @Override
@@ -170,6 +183,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             SheetOperationHelper
                     .duplicateSheets(account, mEditPrimaryId.getText().toString().trim(), sheetId,
                             2, getMonths());
+        } else if (v == mBtnAddSheet) { // Add new sheet
+            if (TextUtils.isEmpty(mEditPrimaryId.getText().toString().trim()) ||
+                    TextUtils.isEmpty(mEditSheetName.getText().toString().trim())) {
+                Log.w(TAG, "Cannot add new sheet. Spreadsheet id or sheet name empty");
+                return;
+            }
+            String name;
+            try {
+                name = mEditSheetName.getText().toString().trim();
+            } catch (Exception e) {
+                Log.w(TAG, "Cannot duplicate sheets. sheet id not parsed");
+                return;
+            }
+            SheetOperationHelper
+                    .addSheet(account, mEditPrimaryId.getText().toString().trim(), name, 2);
         }
     }
 

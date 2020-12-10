@@ -238,4 +238,30 @@ public class SheetOperationHelper {
             }
         });
     }
+
+    public static void addSheet(@Nonnull final Account account,
+            @Nonnull final String spreadsheetId,
+            final String sheetName,
+            final int sheetIndex) {
+        AppExecutors executors = AppExecutors.getInstance();
+        executors.networkIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                SheetsProcessor processor =
+                        new SheetsProcessor(MainApplication.getInstance(),
+                                MainApplication.getInstance().getApplicationInfo().name,
+                                account,
+                                Arrays.asList(SCOPES));
+                try {
+                    BatchUpdateSpreadsheetRequest requestBody = SpreadsheetRequestHelper
+                            .getAddSheetRequest(sheetName, sheetIndex);
+                    processor.updateSheet(spreadsheetId, requestBody);
+                    Log.d(TAG, "Add sheet success");
+                } catch (IOException e) {
+                    Log.d(TAG, "Add sheet unsuccess");
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 }
